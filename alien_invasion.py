@@ -22,19 +22,24 @@ class AlienInvasion:
         
     def run_game(self):
         """게임의 메인 루프를 시작합니다."""
-        while True:
-            # 키보드와 마우스 이벤트에 응답합니다
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
-                    
-            # 루프를 반복할 때마다 화면을 다시 그립니다.
-            self.screen.fill(self.settings.bg_color)
-            self.ship.blitme()
-            
-            # 가장 최근 그린 화면을 표시합니다.
-            pygame.display.flip()
+        while True: 
+            self._check_events()
+            self._update_screen()
             self.clock.tick(60)
+            
+    def _check_events(self):
+        """키 입력과 마우스 이벤트에 응답합니다."""
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+    
+    def _update_screen(self):
+        """화면의 이미지를 업데이트하고, 화면을 새로 그립니다."""
+        self.screen.fill(self.settings.bg_color)
+        self.ship.blitme()
+        
+        pygame.display.flip()
+        
             
 if __name__ == '__main__':
     ai = AlienInvasion()
