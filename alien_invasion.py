@@ -30,13 +30,13 @@ class AlienInvasion:
         
         self._create_fleet()
         
-        
     def run_game(self):
         """게임의 메인 루프를 시작합니다."""
         while True: 
             self._check_events()
             self.ship.update()
             self._update_bullets()
+            self._update_aliens()
             self._update_screen()
             self.clock.tick(60)
             
@@ -84,6 +84,11 @@ class AlienInvasion:
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
     
+    def _update_aliens(self):
+        """외계인 함대의 수평 방향을 바꾸고 아래로 내려갑니다."""
+        self._check_fleet_edges()
+        self.aliens.update()
+    
     def _create_fleet(self):
         """외계인 함대를 만듭니다."""
         # 외계인 하나를 만들고, 공간이 없을 때까지 계속 추가합니다.
@@ -100,8 +105,7 @@ class AlienInvasion:
             
             # 한 줄이 끝났으니 x값은 초기화하고 y값은 늘립니다.
             current_x = alien_width
-            current_y += 2 * alien_height
-            
+            current_y += 2 * alien_height     
                 
     def _create_alien(self, x_position, y_position):
         """외계인 하나를 만들어 배치합니다."""
@@ -111,7 +115,20 @@ class AlienInvasion:
         new_alien.rect.y = y_position
         
         self.aliens.add(new_alien)
-        
+    
+    def _check_fleet_edges(self):
+        """외계인이 화면 경계에 도달했을 때 반응합니다."""
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+            
+    def _change_fleet_direction(self):
+        """함대 전체를 한 줄 내리고 좌우 방향을 바꿉니다."""
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
+    
     def _update_screen(self):
         """화면의 이미지를 업데이트하고, 화면을 새로 그립니다."""
         self.screen.fill(self.settings.bg_color)

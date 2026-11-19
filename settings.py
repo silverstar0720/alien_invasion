@@ -17,3 +17,9 @@ class Settings:
         self.bullet_height = 15
         self.bullet_color = (60, 60, 60)
         self.bullets_allowed = 3 # 딱 세 개까지 쏠 수 있음
+        
+        # 외계인 설정
+        self.alien_speed = 1.0
+        self.fleet_drop_speed = 10
+        # 은 오른쪽, -1은 왼쪽입니다.
+        self.fleet_direction = 1
