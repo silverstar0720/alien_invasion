@@ -16,4 +16,4 @@ class Settings:
         self.bullet_width = 3
         self.bullet_height = 15
         self.bullet_color = (60, 60, 60)
-        self.bullet_allowed = 3 # 딱 세 개까지 쏠 수 있음
+        self.bullets_allowed = 3 # 딱 세 개까지 쏠 수 있음
