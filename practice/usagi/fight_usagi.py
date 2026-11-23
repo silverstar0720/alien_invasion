@@ -80,6 +80,17 @@ class FightUsagi:
             if bullet.rect.left >= self.screen.get_rect().right:
                 self.bullets.remove(bullet)
     
+    def _check_bullet_chiikawa_collisions(self):
+        """총알과 치이카와의 충돌을 관리합니다."""
+        # 총알과 치이카와가 총동했을 시 제거
+        collisions = pygame.sprite.groupcollide(
+            self.bullets, self.chiikawas, True, True)
+        
+        # 치이카와를 다 제거했을 시 새로운 치이카와 군단 생성
+        if not self.chiikawas:
+            self.bullets.empty()
+            self._create_chiikawas()
+    
     def _update_chiikawas(self):
         """치이카와들 위치 업데이트"""
         self._check_chiikawas_edges()
