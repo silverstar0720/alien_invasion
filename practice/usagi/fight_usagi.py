@@ -79,6 +79,7 @@ class FightUsagi:
         for bullet in self.bullets.copy():
             if bullet.rect.left >= self.screen.get_rect().right:
                 self.bullets.remove(bullet)
+        self._check_bullet_chiikawa_collisions()
     
     def _check_bullet_chiikawa_collisions(self):
         """총알과 치이카와의 충돌을 관리합니다."""

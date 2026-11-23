@@ -11,6 +11,7 @@ class Settings:
         # 우주선 설정
         # self.ship_speed = 1.5
         self.ship_speed = 15.0
+        self.ship_limit = 3
         
         # 탄환 설정
         self.bullet_speed = 10.0
@@ -21,7 +22,7 @@ class Settings:
         self.bullets_allowed = 3 # 딱 세 개까지 쏠 수 있음
         
         # 외계인 설정
-        self.alien_speed = 1.0
+        self.alien_speed = 10.0
         self.fleet_drop_speed = 10
         # 은 오른쪽, -1은 왼쪽입니다.
         self.fleet_direction = 1

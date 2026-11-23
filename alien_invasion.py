@@ -1,8 +1,10 @@
 import sys
+from time import sleep
 
 import pygame
 
 from settings import Settings
+from game_stats import GameStats
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
@@ -24,19 +26,28 @@ class AlienInvasion:
         
         pygame.display.set_caption("Alien Invasion")
         
+        # 게임 기록을 저장할 인스턴스를 만듭니다.
+        self.stats = GameStats(self)
+        
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         
         self._create_fleet()
         
+        # 게임을 활성 상태로 시작합니다.
+        self.game_active = True
+        
     def run_game(self):
         """게임의 메인 루프를 시작합니다."""
         while True: 
             self._check_events()
-            self.ship.update()
-            self._update_bullets()
-            self._update_aliens()
+            
+            if self.game_active:
+                self.ship.update()
+                self._update_bullets()
+                self._update_aliens()
+            
             self._update_screen()
             self.clock.tick(60)
             
@@ -98,13 +109,19 @@ class AlienInvasion:
             # 남아있는 탄환을 제거하고, 함대를 새로 만듭니다.
             self.bullets.empty()
             self._create_fleet()
-        
     
     def _update_aliens(self):
         """외계인 함대의 수평 방향을 바꾸고 아래로 내려갑니다."""
         self._check_fleet_edges()
         self.aliens.update()
-    
+        
+        # 외계인과 우주선의 충돌 검색
+        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+            self._ship_hit()
+            
+        # 화면 하단에 도달한 외계인을 찾습니다.
+        self._check_aliens_bottom()
+                
     def _create_fleet(self):
         """외계인 함대를 만듭니다."""
         # 외계인 하나를 만들고, 공간이 없을 때까지 계속 추가합니다.
@@ -145,6 +162,33 @@ class AlienInvasion:
             alien.rect.y += self.settings.fleet_drop_speed
         self.settings.fleet_direction *= -1
     
+    def _ship_hit(self):
+        """외계인이 우주선에 충돌할 때 할 작업"""
+        if self.stats.ships_left > 0:
+            # ships_left에서 1을 뺍니다.
+            self.stats.ships_left -= 1
+        
+            # 남아있는 탄환과 외계인을 모두 제거합니다.
+            self.bullets.empty()
+            self.aliens.empty()
+            
+            # 함대를 새로 만들고 우주선을 화면 하단 중앙으로 이동시킵니다.
+            self._create_fleet()
+            self.ship.center_ship()
+            
+            # 일시 중지
+            sleep(0.5)
+        else:
+            self.game_active = False
+    
+    def _check_aliens_bottom(self):
+        """화면 하단에 도달한 외계인이 있는지 확인합니다."""
+        for alien in self.aliens.sprites():
+            if alien.rect.bottom >= self.screen.get_rect().height:
+                # 우주선에 외계인이 충돌했을 때와 똑같이 반응합니다.
+                self._ship_hit()
+                break
+            
     def _update_screen(self):
         """화면의 이미지를 업데이트하고, 화면을 새로 그립니다."""
         self.screen.fill(self.settings.bg_color)
@@ -156,8 +200,7 @@ class AlienInvasion:
         self.aliens.draw(self.screen)
         
         pygame.display.flip()
-        
-            
+    
 if __name__ == '__main__':
     ai = AlienInvasion()
     ai.run_game()

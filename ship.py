@@ -34,6 +34,11 @@ class Ship:
         # self.x를 통해 rect 객체의 위치를 업데이트합니다.
         self.rect.x = self.x        
     
+    def center_ship(self):
+        """우주선을 화면 하단 중앙으로 이동시킵니다."""
+        self.rect.midbottom = self.screen_rect.midbottom
+        self.x = float(self.rect.x)
+        
     def blitme(self):
         """우주선을 현재 위치에 그립니다."""
         self.screen.blit(self.image, self.rect)
