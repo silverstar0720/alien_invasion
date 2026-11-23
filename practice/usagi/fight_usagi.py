@@ -26,6 +26,7 @@ class FightUsagi:
         
         self.chiikawas = pygame.sprite.Group()
         self._create_chiikawas()
+        print(f"총 치이카와: {len(self.chiikawas)}마리")
     
     def run_game(self):
         """게임의 메인 루프"""
@@ -33,6 +34,7 @@ class FightUsagi:
             self._check_events()
             self.usagi.update()
             self._update_bullets()
+            self._update_chiikawas()
             self._update_screen()
             self.clock.tick(60)
             
@@ -78,6 +80,11 @@ class FightUsagi:
             if bullet.rect.left >= self.screen.get_rect().right:
                 self.bullets.remove(bullet)
     
+    def _update_chiikawas(self):
+        """치이카와들 위치 업데이트"""
+        self._check_chiikawas_edges()
+        self.chiikawas.update()
+    
     def _create_chiikawas(self):
         """치이카와들을 만듭니다."""
         chiikawa = Chiikawa(self)
@@ -90,7 +97,8 @@ class FightUsagi:
         while current_x > 2 * width:
             while current_y < screen_height - 3/2 * height:
                 new_chiikawa = Chiikawa(self)
-                new_chiikawa.rect.y = current_y
+                new_chiikawa.y = current_y
+                new_chiikawa.rect.y = new_chiikawa.y
                 new_chiikawa.x = current_x
                 new_chiikawa.rect.x = new_chiikawa.x
                 self.chiikawas.add(new_chiikawa)
@@ -98,9 +106,20 @@ class FightUsagi:
                 current_y += height/4 + height
             current_x -= width/4 + width
             current_y = height
-        
-        
-        
+    
+    def _check_chiikawas_edges(self):
+        """치이카와가 화면 경계에 닿았을 떄 반응"""
+        for chiikawa in self.chiikawas.sprites():
+            if chiikawa.check_edges():
+                self._change_chiikawas_direction()
+                break
+    
+    def _change_chiikawas_direction(self):
+        """치이카와들을 왼쪽으로 전진한 후 방향을 전환합니다."""
+        for chiikawa in self.chiikawas.sprites():
+            chiikawa.x -= self.settings.chiikawa_x_speed
+            chiikawa.rect.x = chiikawa.x
+        self.settings.chiikawa_direction *= -1
     
     def _update_screen(self):
         """화면의 ^이미지를^ 업데이트하고 화면을 새로 그립니다."""

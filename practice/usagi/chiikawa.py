@@ -21,8 +21,18 @@ class Chiikawa(Sprite):
         
         # 위치를 부동소수점으로 저장
         self.x = float(self.rect.x)
-        
+        self.y = float(self.rect.y)
+    
+    def check_edges(self):
+        """화면 경계에 닿는다면 True 반환합니다."""
+        if (self.rect.bottom >= self.screen.get_rect().bottom) or (
+            self.rect.top <= self.screen.get_rect().top):
+            return True
+        else:
+            False
+            
     def update(self):
         """치이카와의 위치를 업데이트합니다."""
-        self.x -= self.settings.chiikawa_speed
-        self.rect.x = self.x
+        self.y += (self.settings.chiikawa_speed 
+                   * self.settings.chiikawa_direction)
+        self.rect.y = self.y
