@@ -83,6 +83,22 @@ class AlienInvasion:
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
+        
+        self._check_bullet_alien_collisions()
+    
+    def _check_bullet_alien_collisions(self):
+        """탄환과 외계인의 충돌을 관리합니다."""
+        # 외계인을 맞힌 탄환이 있는지 확인합니다.
+        # 맞힌 탄환이 있으면 탄환과 외계인을 제거합니다.
+        collisions = pygame.sprite.groupcollide(
+            self.bullets, self.aliens, False, True)
+
+        # 외계인을 모두 제거했다면
+        if not self.aliens:
+            # 남아있는 탄환을 제거하고, 함대를 새로 만듭니다.
+            self.bullets.empty()
+            self._create_fleet()
+        
     
     def _update_aliens(self):
         """외계인 함대의 수평 방향을 바꾸고 아래로 내려갑니다."""

@@ -9,11 +9,13 @@ class Settings:
         self.bg_color = (230, 230, 230)
         
         # 우주선 설정
-        self.ship_speed = 1.5
+        # self.ship_speed = 1.5
+        self.ship_speed = 15.0
         
         # 탄환 설정
         self.bullet_speed = 10.0
-        self.bullet_width = 3
+        # self.bullet_width = 3
+        self.bullet_width = 300
         self.bullet_height = 15
         self.bullet_color = (60, 60, 60)
         self.bullets_allowed = 3 # 딱 세 개까지 쏠 수 있음
