@@ -33,6 +33,12 @@ class Usagi:
             self.y += self.settings.usagi_speed
         self.rect.y = self.y
     
+    def midleft_usagi(self):
+        """우사기 자리를 좌측 가운데로 재설정"""
+        self.rect.midleft = self.screen_rect.midleft
+        self.rect.x += 20
+        self.y = float(self.rect.y)
+    
     def blitme(self):
         """화면에 그림을 그립니다."""
         self.screen.blit(self.image, self.rect)

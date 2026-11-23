@@ -10,6 +10,7 @@ class Settings:
         
         # 우사기 설정
         self.usagi_speed = 7.0
+        self.usagis_left = 3 # 우사기 기본 목숨 개수
         
         # 물 총알 설정
         self.bullet_speed = 10.0
@@ -20,5 +21,5 @@ class Settings:
         
         # 치이카와 설정
         self.chiikawa_speed = 1.5
-        self.chiikawa_x_speed = 3.0
+        self.chiikawa_x_speed = 30.0
         self.chiikawa_direction = 1 # 1이 아래쪽, -1이 위쪽 이동

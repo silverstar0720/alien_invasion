@@ -1,8 +1,10 @@
 import sys
+from time import sleep
 
 import pygame
 
 from settings import Settings
+from game_stats import GameStats
 from usagi import Usagi
 from bullet import Bullet
 from chiikawa import Chiikawa
@@ -21,20 +23,29 @@ class FightUsagi:
             (self.settings.screen_width, self.settings.screen_height))
         pygame.display.set_caption("싸워라! 우사기")
         
+        # 게임 기록 인스턴스 만들기
+        self.stats = GameStats(self)
+        
         self.usagi = Usagi(self)
         self.bullets = pygame.sprite.Group()
         
         self.chiikawas = pygame.sprite.Group()
         self._create_chiikawas()
         print(f"총 치이카와: {len(self.chiikawas)}마리")
+        
+        # 게임 실행 플래그
+        self.game_active = True
     
     def run_game(self):
         """게임의 메인 루프"""
         while True:
             self._check_events()
-            self.usagi.update()
-            self._update_bullets()
-            self._update_chiikawas()
+            
+            if self.game_active:
+                self.usagi.update()
+                self._update_bullets()
+                self._update_chiikawas()
+            
             self._update_screen()
             self.clock.tick(60)
             
@@ -42,6 +53,8 @@ class FightUsagi:
         """사용자 입력에 응답합니다."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                print(f"우사기-치이 충돌 횟수: {self.stats.usagi_collision_count}")
+                print(f"치이를 총알로 맞춘 횟수: {self.stats.bullet_collision_count}")
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
@@ -55,6 +68,8 @@ class FightUsagi:
         elif event.key == pygame.K_DOWN:
             self.usagi.moving_down = True
         elif event.key == pygame.K_q:
+            print(f"우사기-치이 충돌 횟수: {self.stats.usagi_collision_count}")
+            print(f"치이를 총알로 맞춘 횟수: {self.stats.bullet_collision_count}")
             sys.exit()
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
@@ -83,9 +98,11 @@ class FightUsagi:
     
     def _check_bullet_chiikawa_collisions(self):
         """총알과 치이카와의 충돌을 관리합니다."""
-        # 총알과 치이카와가 총동했을 시 제거
+        # 총알과 치이카와가 충돌했을 시 제거
         collisions = pygame.sprite.groupcollide(
             self.bullets, self.chiikawas, True, True)
+        if collisions:
+            self.stats.bullet_collision_count += 1
         
         # 치이카와를 다 제거했을 시 새로운 치이카와 군단 생성
         if not self.chiikawas:
@@ -96,7 +113,15 @@ class FightUsagi:
         """치이카와들 위치 업데이트"""
         self._check_chiikawas_edges()
         self.chiikawas.update()
-    
+        
+        # 치이카와들과 우사기가 충돌했을 시
+        if pygame.sprite.spritecollideany(self.usagi, self.chiikawas):
+            self.stats.usagi_collision_count += 1
+            self._usagi_hit()
+            
+        # 화면 왼편에 치이카와들이 도달했을 시
+        self._check_chiikawas_left()
+            
     def _create_chiikawas(self):
         """치이카와들을 만듭니다."""
         chiikawa = Chiikawa(self)
@@ -132,6 +157,35 @@ class FightUsagi:
             chiikawa.x -= self.settings.chiikawa_x_speed
             chiikawa.rect.x = chiikawa.x
         self.settings.chiikawa_direction *= -1
+    
+    def _usagi_hit(self):
+        """치이카와들이 우사기에 닿았을 때
+        혹은 화면 왼편에 닿았을 때 할 작업
+        """
+        if self.stats.usagis_left > 0:
+            # 우사기 게임 목숨 1 빼기
+            self.stats.usagis_left -= 1
+            
+            # 총알과 치이카와 그룹 요소 제거
+            self.bullets.empty()
+            self.chiikawas.empty()
+            
+            # 치이카와들을 새로만들고, 우사기 자리 초기화
+            self._create_chiikawas()
+            self.usagi.midleft_usagi()
+            
+            # 일시 중지
+            sleep(0.5)
+        else:
+            self.game_active = False
+    
+    def _check_chiikawas_left(self):
+        """화면 왼편에 도달한 치이카와가 있는지 확인합니다."""
+        for chiikawa in self.chiikawas.sprites():
+            if chiikawa.rect.left <= 0:
+                # 우사기에 치이카와가 충돌할 때와 같이 반응합니다.
+                self._usagi_hit()
+                break    
     
     def _update_screen(self):
         """화면의 ^이미지를^ 업데이트하고 화면을 새로 그립니다."""
