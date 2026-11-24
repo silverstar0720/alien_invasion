@@ -1,3 +1,5 @@
+from random import randint
+
 import pygame
 from pygame.sprite import Sprite
 
@@ -16,8 +18,11 @@ class Chiikawa(Sprite):
         self.rect = self.image.get_rect()
         
         # 초기 위치 설정
-        self.rect.x = self.rect.width
-        self.rect.y = self.rect.height
+        self.rect.left = self.screen_rect.right
+        chiikawa_top_max = self.screen_rect.height - self.rect.height
+        self.rect.top = randint(0, chiikawa_top_max)
+        # self.rect.x = self.rect.width
+        # self.rect.y = self.rect.height
         
         # 위치를 부동소수점으로 저장
         self.x = float(self.rect.x)
@@ -33,6 +38,8 @@ class Chiikawa(Sprite):
             
     def update(self):
         """치이카와의 위치를 업데이트합니다."""
-        self.y += (self.settings.chiikawa_speed 
-                   * self.settings.chiikawa_direction)
-        self.rect.y = self.y
+        # self.y += (self.settings.chiikawa_speed 
+        #            * self.settings.chiikawa_direction)
+        # self.rect.y = self.y
+        self.x -= self.settings.chiikawa_speed
+        self.rect.x = self.x

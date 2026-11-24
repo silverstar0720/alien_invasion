@@ -1,5 +1,6 @@
 import sys
 from time import sleep
+from random import random
 
 import pygame
 
@@ -30,7 +31,7 @@ class FightUsagi:
         self.bullets = pygame.sprite.Group()
         
         self.chiikawas = pygame.sprite.Group()
-        self._create_chiikawas()
+        # self._create_chiikawas()
         print(f"총 치이카와: {len(self.chiikawas)}마리")
         
         # 게임 실행 플래그
@@ -42,6 +43,7 @@ class FightUsagi:
             self._check_events()
             
             if self.game_active:
+                self._create_chiikawas()
                 self.usagi.update()
                 self._update_bullets()
                 self._update_chiikawas()
@@ -103,6 +105,7 @@ class FightUsagi:
             self.bullets, self.chiikawas, True, True)
         if collisions:
             self.stats.bullet_collision_count += 1
+            print(self.stats.bullet_collision_count)
         
         # 치이카와를 다 제거했을 시 새로운 치이카와 군단 생성
         if not self.chiikawas:
@@ -111,7 +114,7 @@ class FightUsagi:
     
     def _update_chiikawas(self):
         """치이카와들 위치 업데이트"""
-        self._check_chiikawas_edges()
+        # self._check_chiikawas_edges()
         self.chiikawas.update()
         
         # 치이카와들과 우사기가 충돌했을 시
@@ -124,25 +127,28 @@ class FightUsagi:
             
     def _create_chiikawas(self):
         """치이카와들을 만듭니다."""
-        chiikawa = Chiikawa(self)
-        width, height = chiikawa.rect.size
-        screen_width, screen_height = self.screen.get_rect().size
+        if random() < self.settings.chiikawa_frequency:
+            chiikawa = Chiikawa(self)
+            self.chiikawas.add(chiikawa)
+        # chiikawa = Chiikawa(self)
+        # width, height = chiikawa.rect.size
+        # screen_width, screen_height = self.screen.get_rect().size
         
-        current_x = screen_width - (width/2 + width)
-        current_y = height
+        # current_x = screen_width - (width/2 + width)
+        # current_y = height
 
-        while current_x > 2 * width:
-            while current_y < screen_height - 3/2 * height:
-                new_chiikawa = Chiikawa(self)
-                new_chiikawa.y = current_y
-                new_chiikawa.rect.y = new_chiikawa.y
-                new_chiikawa.x = current_x
-                new_chiikawa.rect.x = new_chiikawa.x
-                self.chiikawas.add(new_chiikawa)
+        # while current_x > 2 * width:
+        #     while current_y < screen_height - 3/2 * height:
+        #         new_chiikawa = Chiikawa(self)
+        #         new_chiikawa.y = current_y
+        #         new_chiikawa.rect.y = new_chiikawa.y
+        #         new_chiikawa.x = current_x
+        #         new_chiikawa.rect.x = new_chiikawa.x
+        #         self.chiikawas.add(new_chiikawa)
                 
-                current_y += height/4 + height
-            current_x -= width/4 + width
-            current_y = height
+        #         current_y += height/4 + height
+        #     current_x -= width/4 + width
+        #     current_y = height
     
     def _check_chiikawas_edges(self):
         """치이카와가 화면 경계에 닿았을 떄 반응"""

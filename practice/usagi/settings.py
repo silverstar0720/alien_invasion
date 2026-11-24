@@ -21,5 +21,6 @@ class Settings:
         
         # 치이카와 설정
         self.chiikawa_speed = 1.5
-        self.chiikawa_x_speed = 30.0
+        self.chiikawa_x_speed = 3.0
         self.chiikawa_direction = 1 # 1이 아래쪽, -1이 위쪽 이동
+        self.chiikawa_frequency = 0.015
