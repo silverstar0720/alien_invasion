@@ -5,6 +5,7 @@ import pygame
 
 from settings import Settings
 from game_stats import GameStats
+from button import Button
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
@@ -18,11 +19,11 @@ class AlienInvasion:
         self.clock = pygame.time.Clock()
         self.settings = Settings()
         
-        # self.screen = pygame.display.set_mode(
-        #     (self.settings.screen_width, self.settings.screen_height))
-        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-        self.settings.screen_width = self.screen.get_rect().width
-        self.settings.screen_height = self.screen.get_rect().height
+        self.screen = pygame.display.set_mode(
+            (self.settings.screen_width, self.settings.screen_height))
+        # self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        # self.settings.screen_width = self.screen.get_rect().width
+        # self.settings.screen_height = self.screen.get_rect().height
         
         pygame.display.set_caption("Alien Invasion")
         
@@ -36,7 +37,10 @@ class AlienInvasion:
         self._create_fleet()
         
         # 게임을 활성 상태로 시작합니다.
-        self.game_active = True
+        self.game_active = False
+        
+        # [플레이] 버튼을 만듭니다
+        self.play_button = Button(self, 'Play')
         
     def run_game(self):
         """게임의 메인 루프를 시작합니다."""
@@ -60,6 +64,9 @@ class AlienInvasion:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                self._check_play_button(mouse_pos)
                     
     def _check_keydown_events(self, event):
         """키를 누를 때 응답합니다."""
@@ -79,6 +86,22 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
     
+    def _check_play_button(self, mouse_pos):
+        """플레이어가 [플레이]버튼을 클릭하면 게임을 시작합니다."""
+        button_clicked = self.play_button.rect.collidepoint(mouse_pos)
+        if button_clicked and not self.game_active:
+            # 게임 기록 초기화
+            self.stats.reset_stats()
+            self.game_active = True
+            
+            # 남아있는 탄환과 외계인을 모두 제거합니다.
+            self.bullets.empty()
+            self.aliens.empty()
+            
+            # 함대를 새로 만들고 우주선을 화면 하단 중앙으로 이동시킵니다.
+            self._create_fleet()
+            self.ship.center_ship()
+        
     def _fire_bullet(self):
         """새 탄환을 만들어 탄환 그룹에 추가합니다."""
         if len(self.bullets) < self.settings.bullets_allowed:
@@ -198,6 +221,9 @@ class AlienInvasion:
             
         self.ship.blitme()
         self.aliens.draw(self.screen)
+        
+        if not self.game_active:
+            self.play_button.draw_button()
         
         pygame.display.flip()
     
