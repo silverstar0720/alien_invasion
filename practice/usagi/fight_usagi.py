@@ -6,6 +6,7 @@ import pygame
 
 from settings import Settings
 from game_stats import GameStats
+from button import Button
 from usagi import Usagi
 from bullet import Bullet
 from chiikawa import Chiikawa
@@ -35,7 +36,10 @@ class FightUsagi:
         print(f"총 치이카와: {len(self.chiikawas)}마리")
         
         # 게임 실행 플래그
-        self.game_active = True
+        self.game_active = False
+        
+        # 플레이 버튼을 그립니다.
+        self.play_button = Button(self, 'Play')
     
     def run_game(self):
         """게임의 메인 루프"""
@@ -62,6 +66,8 @@ class FightUsagi:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                self._check_play_button()
     
     def _check_keydown_events(self, event):
         """사용자의 키 입력에 응답합니다."""
@@ -75,6 +81,8 @@ class FightUsagi:
             sys.exit()
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
+        elif (event.key == pygame.K_p) and (not self.game_active):
+            self._play_game()
     
     def _check_keyup_events(self, event):
         """사용자가 키를 손에서 뗄 때 응답합니다."""
@@ -82,10 +90,34 @@ class FightUsagi:
             self.usagi.moving_up = False
         elif event.key == pygame.K_DOWN:
             self.usagi.moving_down = False
-            
+    
+    def _check_play_button(self):
+        """플레이어가 [플레이]버튼을 누르면 게임 활성화"""
+        # 마우스 클릭했을 떄 [플레이] 버튼 영역 안에서 눌러야함.
+        mouse_pos = pygame.mouse.get_pos()
+        button_checked = self.play_button.rect.collidepoint(mouse_pos)
+        if (button_checked) and (not self.game_active):
+            self._play_game()
+    
+    def _play_game(self):
+        # 게임 활성화와 stats초기화
+        self.game_active = True
+        self.stats.reset_stats()
+        
+        # 치이카와와 탄환 초기화
+        self.chiikawas.empty()
+        self.bullets.empty()
+        
+        # 우사기 위치 초기화
+        self.usagi.midleft_usagi()
+        
+        # 마우스 없애기
+        pygame.mouse.set_visible(False)
+        
     def _fire_bullet(self):
         """새 총알을 만들어 총알그룹에 저장합니다."""
-        if len(self.bullets) < self.settings.bullet_allowed:
+        if (len(self.bullets) < self.settings.bullet_allowed) and (
+                                                    self.game_active):
             bullet = Bullet(self)
             self.bullets.add(bullet)
     
@@ -108,9 +140,9 @@ class FightUsagi:
             print(self.stats.bullet_collision_count)
         
         # 치이카와를 다 제거했을 시 새로운 치이카와 군단 생성
-        if not self.chiikawas:
-            self.bullets.empty()
-            self._create_chiikawas()
+        # if not self.chiikawas:
+        #     self.bullets.empty()
+        #     self._create_chiikawas()
     
     def _update_chiikawas(self):
         """치이카와들 위치 업데이트"""
@@ -177,13 +209,14 @@ class FightUsagi:
             self.chiikawas.empty()
             
             # 치이카와들을 새로만들고, 우사기 자리 초기화
-            self._create_chiikawas()
+            # self._create_chiikawas()
             self.usagi.midleft_usagi()
             
             # 일시 중지
             sleep(0.5)
         else:
             self.game_active = False
+            pygame.mouse.set_visible(True)
     
     def _check_chiikawas_left(self):
         """화면 왼편에 도달한 치이카와가 있는지 확인합니다."""
@@ -201,6 +234,9 @@ class FightUsagi:
         self.usagi.blitme()
         
         self.chiikawas.draw(self.screen)
+        
+        if self.game_active == False:
+            self.play_button.draw_button()
                     
         pygame.display.flip()
     

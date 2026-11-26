@@ -10,7 +10,7 @@ class Settings:
         
         # 우사기 설정
         self.usagi_speed = 7.0
-        self.usagis_left = 3 # 우사기 기본 목숨 개수
+        self.usagis_left = 0 # 우사기 기본 목숨 개수
         
         # 물 총알 설정
         self.bullet_speed = 10.0
