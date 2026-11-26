@@ -5,3 +5,4 @@ __pycache__/
 practice/*
 practice/usagi/images/*
 !practice/usagi/
+!practice/14_2/

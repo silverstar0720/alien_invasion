@@ -23,5 +23,5 @@ class Settings:
         # 외계인 설정
         self.alien_speed = 10.0
         self.fleet_drop_speed = 10
-        # 은 오른쪽, -1은 왼쪽입니다.
+        # 1은 오른쪽, -1은 왼쪽입니다.
         self.fleet_direction = 1
