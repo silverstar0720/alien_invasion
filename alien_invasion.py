@@ -78,6 +78,8 @@ class AlienInvasion:
             sys.exit()
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
+        elif (event.key == pygame.K_p) and (not self.game_active):
+            self._start_game()
     
     def _check_keyup_events(self, event):
         """키에서 손을 뗄 때 응답합니다."""
@@ -89,19 +91,26 @@ class AlienInvasion:
     def _check_play_button(self, mouse_pos):
         """플레이어가 [플레이]버튼을 클릭하면 게임을 시작합니다."""
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
-        if button_clicked and not self.game_active:
-            # 게임 기록 초기화
-            self.stats.reset_stats()
-            self.game_active = True
+        if button_clicked and (not self.game_active):
+            self._start_game()
             
-            # 남아있는 탄환과 외계인을 모두 제거합니다.
-            self.bullets.empty()
-            self.aliens.empty()
-            
-            # 함대를 새로 만들고 우주선을 화면 하단 중앙으로 이동시킵니다.
-            self._create_fleet()
-            self.ship.center_ship()
+    def _start_game(self):
+        """게임을 시작합니다."""
+        # 게임 기록 초기화
+        self.stats.reset_stats()
+        self.game_active = True
         
+        # 남아있는 탄환과 외계인을 모두 제거합니다.
+        self.bullets.empty()
+        self.aliens.empty()
+        
+        # 함대를 새로 만들고 우주선을 화면 하단 중앙으로 이동시킵니다.
+        self._create_fleet()
+        self.ship.center_ship()
+        
+        # 마우스 커서를 숨깁니다.
+        pygame.mouse.set_visible(False)
+    
     def _fire_bullet(self):
         """새 탄환을 만들어 탄환 그룹에 추가합니다."""
         if len(self.bullets) < self.settings.bullets_allowed:
@@ -203,6 +212,7 @@ class AlienInvasion:
             sleep(0.5)
         else:
             self.game_active = False
+            pygame.mouse.set_visible(True)
     
     def _check_aliens_bottom(self):
         """화면 하단에 도달한 외계인이 있는지 확인합니다."""

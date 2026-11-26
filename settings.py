@@ -11,7 +11,7 @@ class Settings:
         # 우주선 설정
         # self.ship_speed = 1.5
         self.ship_speed = 15.0
-        self.ship_limit = 3
+        self.ship_limit = 0
         
         # 탄환 설정
         self.bullet_speed = 10.0

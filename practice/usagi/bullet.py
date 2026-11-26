@@ -5,6 +5,7 @@ class Bullet(Sprite):
     """우사기가 발사하는 물총의 총알을 관리하는 클래스"""
     
     def __init__(self, game):
+        """총알 객체 요소를 초기화합니다."""
         super().__init__()
         
         self.screen = game.screen
