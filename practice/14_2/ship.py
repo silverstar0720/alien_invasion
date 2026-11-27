@@ -24,6 +24,11 @@ class Ship:
         self.up_flag = False
         self.down_flag = False
         
+    def ship_midleft(self):
+        """우주선의 초기위치를 midleft로 설정"""
+        self.rect.midleft = self.screen_rect.midleft
+        self.y = self.rect.y
+        
     def update(self):
         """우주선의 위치를 업데이트 합니다."""
         if self.up_flag and (self.rect.top > 0):

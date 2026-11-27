@@ -13,14 +13,15 @@ class Settings:
         
         # 탄환 설정
         self.bullet_width = 20
-        self.bullet_height = 20
-        self.bullet_speed = 5.0
+        self.bullet_height = 5
+        self.bullet_speed = 8.0
         self.bullet_color = (0, 0, 0)
+        self.bullet_limit = 3
         
         # 타겟 설정
         self.target_width = 50
         self.target_height = 50
-        self.target_speed = 5.0
+        self.target_speed = 3.5
         self.target_color = (255, 0, 0)
         # 1은 아래쪽, -1은 위쪽으로 감
         self.target_direction = 1

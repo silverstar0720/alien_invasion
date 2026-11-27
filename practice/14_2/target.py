@@ -19,6 +19,11 @@ class Target:
         # 타겟의 y좌표를 부동소수점으로 저장합니다.
         self.y = self.rect.y
                         
+    def target_midright(self):
+        """타겟의 초기 위치를 midright로 설정"""
+        self.rect.midright = self.screen_rect.midright
+        self.y = self.rect.y
+    
     def update(self):
         """타겟의 위치를 업데이트합니다."""
         self.y += self.settings.target_speed * self.settings.target_direction
