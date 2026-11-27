@@ -92,11 +92,13 @@ class AlienInvasion:
         """플레이어가 [플레이]버튼을 클릭하면 게임을 시작합니다."""
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
         if button_clicked and (not self.game_active):
+            # 게임 설정 초기화
             self._start_game()
             
     def _start_game(self):
         """게임을 시작합니다."""
         # 게임 기록 초기화
+        self.settings.initialize_dynamic_settings()
         self.stats.reset_stats()
         self.game_active = True
         
@@ -141,6 +143,7 @@ class AlienInvasion:
             # 남아있는 탄환을 제거하고, 함대를 새로 만듭니다.
             self.bullets.empty()
             self._create_fleet()
+            self.settings.increase_speed()
     
     def _update_aliens(self):
         """외계인 함대의 수평 방향을 바꾸고 아래로 내려갑니다."""
